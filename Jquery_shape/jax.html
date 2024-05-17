@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulasi Bentuk dengan jQuery Nih Boss</title>
+    <link rel="icon" href="WhatsApp Image 2024-05-17 at 09.38.31_623c989b.jpg" type="image/x-icon">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e8eaf6; 
+        }
+        #shapeContainerWrapper {
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            overflow: auto; 
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: white;
+        }
+        #shapeContainer {
+            position: relative;
+            width: 100%;
+            min-height: 100%; /* kontainer membesar dengan konten */
+        }
+        .shape {
+            position: absolute;
+            display: none;
+        }
+        .circle {
+            border-radius: 50%;
+        }
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        #controls input, #controls button, #controls select {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let shapeCount = 0;
+            let addingShape = false;
+
+            $('#addShapeBtn').click(function() {
+                if (addingShape) return;
+                addingShape = true;
+
+                const shapeType = $('#shapeType').val();
+                const shapeColor = $('#shapeColor').val();
+                const shapeSize = parseInt($('#shapeSize').val());
+
+                const shape = $('<div class="shape"></div>')
+                    .addClass(shapeType)
+                    .css({
+                        'background-color': shapeColor,
+                        'width': shapeSize + 'px',
+                        'height': shapeSize + 'px'
+                    });
+
+                $('#shapeContainer').append(shape);
+                const xPos = (shapeCount % Math.floor($('#shapeContainer').width() / (shapeSize + 10))) * (shapeSize + 10); // Posisi horizontal responsif
+                const yPos = Math.floor(shapeCount / Math.floor($('#shapeContainer').width() / (shapeSize + 10))) * (shapeSize + 10); // Posisi vertikal responsif
+
+                shape.css({
+                    'left': xPos + 'px',
+                    'top': yPos + 'px'
+                }).fadeIn(500, function() {
+                    shapeCount++;
+                    addingShape = false;
+                });
+            });
+
+            $('#removeShapeBtn').click(function() {
+                if (addingShape) return;
+                addingShape = true;
+
+                const lastShape = $('#shapeContainer .shape').last();
+                if (lastShape.length) {
+                    lastShape.fadeOut(500, function() {
+                        $(this).remove();
+                        shapeCount--;
+                        addingShape = false;
+                    });
+                } else {
+                    addingShape = false;
+                }
+            });
+
+            $('#removeAllShapesBtn').click(function() {
+                if (addingShape) return;
+                addingShape = true;
+
+                $('#shapeContainer').empty();
+                shapeCount = 0;
+                addingShape = false;
+            });
+        }); 
+    </script>
+</head>
+<body>
+ 
+    <div id="shapeContainerWrapper">
+        <div id="shapeContainer"></div>
+    </div>
+    <div id="controls">
+        <button id="addShapeBtn"><i class="fas fa-plus-circle"></i> Tambah Bentuk</button>
+        <button id="removeShapeBtn"><i class="fas fa-minus-circle"></i> Hapus 1 Bentuk</button>
+        <button id="removeAllShapesBtn"><i class="fas fa-trash-alt"></i> Hapus Semua Bentuk</button> <!-- Tombol untuk menghapus semua bentuk -->
+        <select id="shapeType">
+            <option value="square">Square/Kotak</option>
+            <option value="circle">Circle/Bulat</option>
+        </select>
+        <input type="color" id="shapeColor" value="#ff0000">
+        <input type="number" id="shapeSize" value="50" min="10" max="100">
+    </div>
+</body>
+</html>
